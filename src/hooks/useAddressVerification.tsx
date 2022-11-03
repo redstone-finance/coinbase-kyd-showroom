@@ -12,6 +12,7 @@ export const useAddressVerification = (
   setIsLoading: Dispatch<SetStateAction<boolean>>
 ) => {
   const [errorMessage, setErrorMessage] = useState("");
+  const [transactionHash, setTransactionHash] = useState("");
 
   const verifyAddress = async () => {
     if (network && signer) {
@@ -41,17 +42,20 @@ export const useAddressVerification = (
   ) => {
     try {
       const contract = new Contract(contractAddress, abi, signer);
-      const wrappedContract = WrapperBuilder.wrap(
-        contract
-      ).usingOnDemandRequest(
-        ["http://localhost:8080/score-by-address/"],
-        ScoreType.coinbaseKYC
-      );
-      const transaction = await wrappedContract.verifyAddress({
-        gasLimit: 300000,
-      });
-      await transaction.wait();
-      return transaction.value;
+      const nodeURL = process.env.NODE_URL;
+      if (!nodeURL) {
+        handleError();
+      } else {
+        const wrappedContract = WrapperBuilder.wrap(
+          contract
+        ).usingOnDemandRequest([nodeURL], ScoreType.coinbaseKYC);
+        const transaction = await wrappedContract.verifyAddress({
+          gasLimit: 300000,
+        });
+        setTransactionHash(transaction.hash);
+        await transaction.wait();
+        return transaction.value;
+      }
     } catch (error) {
       setVerificationResult(false);
       setIsLoading(false);
@@ -67,8 +71,9 @@ export const useAddressVerification = (
   };
 
   return {
+    verifyAddress,
+    transactionHash,
     errorMessage,
     setErrorMessage,
-    verifyAddress,
   };
 };

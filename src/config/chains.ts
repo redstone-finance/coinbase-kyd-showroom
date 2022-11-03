@@ -31,9 +31,9 @@ export const chains: Chains = {
       decimals: 18,
     },
     blockExplorerUrls: ["https://goerli.etherscan.io/"],
-    contractAddress: "0x136c7a2a012e479f0fc93288fbd73ed5dbd52649",
+    contractAddress: "0x5754670C0c1Af2aBe4E18c7E2d27961c4a104B30",
     contractExplorerUrl:
-      "https://goerli.etherscan.io/address/0x136c7a2a012e479f0fc93288fbd73ed5dbd52649",
+      "https://goerli.etherscan.io/address/0x5754670C0c1Af2aBe4E18c7E2d27961c4a104B30",
     logo: WalletIcon,
   },
 };

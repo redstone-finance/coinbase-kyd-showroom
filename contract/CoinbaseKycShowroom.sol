@@ -12,6 +12,9 @@ contract CoinbaseKycShowroom is KycServiceConsumerBase, ERC20 {
 
   constructor() ERC20("KycPassedToken", "KPT") {}
 
+  function getUniqueSignersThreshold() public view virtual override returns (uint8) {
+    return 1;
+  }
 
   function getAuthorisedSignerIndex(address _signerAddress)
     public
@@ -20,15 +23,11 @@ contract CoinbaseKycShowroom is KycServiceConsumerBase, ERC20 {
     override
     returns (uint8)
   {
-    if (_signerAddress == 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC) {
+    if (_signerAddress == 0x1ac6a707eF3524bD2CAE0aB529A8d97F7ae4247e) {
       return 0;
     } else {
       revert("Signer is not authorised");
     }
-  }
-
-  function getUniqueSignersThreshold() public view virtual override returns (uint8) {
-    return 1;
   }
 
   function verifyAddress() public returns(bool) {

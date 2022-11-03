@@ -17,9 +17,18 @@ export const ChainDataTable = ({ walletAddress, network }: Props) => (
             src={WalletIcon}
             alt="Wallet icon"
           />
-          Your wallet
+          Your address
         </td>
-        <td className="py-3 px-6 text-right">{walletAddress}</td>
+
+        <td className="py-3 px-6 text-right underline">
+          <a
+            href={`https://goerli.etherscan.io/address/${walletAddress}`}
+            target="blank"
+            referrerPolicy="no-referrer"
+          >
+            {walletAddress}
+          </a>
+        </td>
       </tr>
       <tr>
         <td className="flex items-center gap-3 py-3 px-6">

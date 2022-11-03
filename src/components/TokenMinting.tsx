@@ -13,6 +13,7 @@ interface Props {
 export const TokenMinting = ({ signer, contractAddress }: Props) => {
   const [isMinting, setIsMinting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [transactionHash, setTransactionHash] = useState("");
   const [addressBalance, setAddressBalance] = useState("");
 
   const onMintToken = async () => {
@@ -20,9 +21,10 @@ export const TokenMinting = ({ signer, contractAddress }: Props) => {
     try {
       const contract = new Contract(contractAddress, abi, signer);
       const transaction = await contract.mintToken();
+      setTransactionHash(transaction.hash);
       await transaction.wait();
+      await getBalanceForAddress();
       setIsMinting(false);
-      getBalanceForAddress();
     } catch (error: any) {
       if (
         error?.reason === "execution reverted: Account already minted token"
@@ -41,17 +43,32 @@ export const TokenMinting = ({ signer, contractAddress }: Props) => {
     const contract = new Contract(contractAddress, abi, signer);
     const address = await signer.getAddress();
     const balance = await contract.balanceOf(address);
-    console.log(utils.formatUnits(balance, 18))
     setAddressBalance(utils.formatUnits(balance, 18));
   };
 
   return (
     <div>
-      {!addressBalance && <p className="text-lg font-bold mb-6">Your address is verified, you can mint token</p>}
       {isMinting ? (
-        <LoaderWithText text="Minting token" />
+        <div>
+          <LoaderWithText text="Minting token" />
+          {transactionHash && (
+            <p className="pt-2">
+              {`Transaction hash: `}
+              <a
+                className="underline"
+                href={`https://goerli.etherscan.io/tx/${transactionHash}`}
+                target="blank"
+                referrerPolicy="no-referrer"
+              >
+                {` ${transactionHash.slice(0, 8)}...${transactionHash.slice(
+                  -6
+                )}`}
+              </a>
+            </p>
+          )}
+        </div>
       ) : !!addressBalance ? (
-        <table className="table-auto border">
+        <table className="w-full table-auto border">
           <tbody className="text-md">
             <tr>
               <td className="py-3 px-6 text-left">KPT Token balance</td>
@@ -60,7 +77,12 @@ export const TokenMinting = ({ signer, contractAddress }: Props) => {
           </tbody>
         </table>
       ) : (
-        <ActionButton action={() => getBalanceForAddress()} text="Mint token" />
+        <div>
+          <p className="text-lg font-bold mb-6">
+            Congrats!! Your address is verified, you can mint token
+          </p>
+          <ActionButton action={() => onMintToken()} text="Mint token" />
+        </div>
       )}
       {!!errorMessage && (
         <Modal

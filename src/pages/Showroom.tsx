@@ -24,7 +24,7 @@ export const Showroom = () => {
     isChangingNetwork,
     isConnecting,
   } = useWeb3Modal();
-  const { errorMessage, setErrorMessage, verifyAddress } =
+  const { verifyAddress, transactionHash, errorMessage, setErrorMessage } =
     useAddressVerification(
       network,
       signer,
@@ -72,7 +72,24 @@ export const Showroom = () => {
             <ChainDataTable walletAddress={walletAddress} network={network} />
           )}
           {isLoading ? (
-            <LoaderWithText text={"Verifying address"} />
+            <div>
+              <LoaderWithText text="Verifying address" />
+              {transactionHash && (
+                <p className="pt-2">
+                  {`Transaction hash: `}
+                  <a
+                    className="underline"
+                    href={`https://goerli.etherscan.io/tx/${transactionHash}`}
+                    target="blank"
+                    referrerPolicy="no-referrer"
+                  >
+                    {` ${transactionHash.slice(0, 8)}...${transactionHash.slice(
+                      -6
+                    )}`}
+                  </a>
+                </p>
+              )}
+            </div>
           ) : isVerificationComplete ? (
             <VerificationResult
               verificationResult={verificationResult}
