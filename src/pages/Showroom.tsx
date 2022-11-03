@@ -45,7 +45,7 @@ export const Showroom = () => {
     <div className="flex justify-center items-center flex-col">
       {!network && (
         <p className="mt-10 mb-0 text-lg font-bold">
-          Please select a chain to verify your address
+          Please connect to verify your address
         </p>
       )}
       <div className="w-3/4 flex flex-wrap justify-center gap-3 px-10 mt-10">
