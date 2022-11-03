@@ -1,9 +1,9 @@
+import { useState } from "react";
 import { Contract, Signer, utils } from "ethers";
 import { ActionButton } from "./ActionButton";
-import { abi } from "../config/contract.json";
-import { useState } from "react";
-import { LoaderWithText } from "./LoaderWithText";
+import { LoaderWithTxHash } from "./LoaderWithTxHash";
 import Modal from "./Modal";
+import { abi } from "../config/contract.json";
 
 interface Props {
   signer: Signer;
@@ -49,24 +49,7 @@ export const TokenMinting = ({ signer, contractAddress }: Props) => {
   return (
     <div>
       {isMinting ? (
-        <div>
-          <LoaderWithText text="Minting token" />
-          {transactionHash && (
-            <p className="pt-2">
-              {`Transaction hash: `}
-              <a
-                className="underline"
-                href={`https://goerli.etherscan.io/tx/${transactionHash}`}
-                target="blank"
-                referrerPolicy="no-referrer"
-              >
-                {` ${transactionHash.slice(0, 8)}...${transactionHash.slice(
-                  -6
-                )}`}
-              </a>
-            </p>
-          )}
-        </div>
+        <LoaderWithTxHash text="Minting token" transactionHash={transactionHash} />
       ) : !!addressBalance ? (
         <table className="w-full table-auto border">
           <tbody className="text-md">

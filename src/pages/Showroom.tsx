@@ -1,13 +1,13 @@
+import { useState } from "react";
 import { useWeb3Modal } from "../hooks/useWeb3Modal";
 import { useAddressVerification } from "../hooks/useAddressVerification";
-import { LoaderWithText } from "../components/LoaderWithText";
-import { ActionButton } from "../components/ActionButton";
-import Modal from "../components/Modal";
-import { ChainButton } from "../components/ChainButton";
-import { ChainDataTable } from "../components/ChainDataTable";
-import { ChainDetails, chains } from "../config/chains";
 import { VerificationResult } from "../components/VerificationResult";
-import { useState } from "react";
+import { ChainDataTable } from "../components/ChainDataTable";
+import Modal from "../components/Modal";
+import { ActionButton } from "../components/ActionButton";
+import { ChainButton } from "../components/ChainButton";
+import { LoaderWithTxHash } from "../components/LoaderWithTxHash";
+import { ChainDetails, chains } from "../config/chains";
 
 const chainsArray = Object.values(chains);
 
@@ -72,24 +72,7 @@ export const Showroom = () => {
             <ChainDataTable walletAddress={walletAddress} network={network} />
           )}
           {isLoading ? (
-            <div>
-              <LoaderWithText text="Verifying address" />
-              {transactionHash && (
-                <p className="pt-2">
-                  {`Transaction hash: `}
-                  <a
-                    className="underline"
-                    href={`https://goerli.etherscan.io/tx/${transactionHash}`}
-                    target="blank"
-                    referrerPolicy="no-referrer"
-                  >
-                    {` ${transactionHash.slice(0, 8)}...${transactionHash.slice(
-                      -6
-                    )}`}
-                  </a>
-                </p>
-              )}
-            </div>
+            <LoaderWithTxHash text="Verifying address" transactionHash={transactionHash} />
           ) : isVerificationComplete ? (
             <VerificationResult
               verificationResult={verificationResult}
