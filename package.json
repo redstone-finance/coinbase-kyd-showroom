@@ -7,12 +7,13 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "@redstone-finance/evm-connector": "^0.0.8",
+    "@redstone-finance/evm-connector": "^0.0.12",
     "ethers": "^5.7.2",
     "parcel": "^2.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "redstone-api": "^0.4.11",
+    "redstone-protocol": "^1.0.4",
     "web3modal": "^1.9.8"
   },
   "devDependencies": {
