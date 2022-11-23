@@ -1,3 +1,3 @@
-# RedStone Coinbase KYC Showroom
+# RedStone Coinbase KYD Showroom
 
-App which demonstrate Coinbase KYC using RedStone oracles.
+App which demonstrate Coinbase KYD using RedStone oracles.
