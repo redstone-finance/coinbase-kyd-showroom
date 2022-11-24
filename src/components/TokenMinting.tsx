@@ -27,9 +27,9 @@ export const TokenMinting = ({ signer, contractAddress }: Props) => {
       setIsMinting(false);
     } catch (error: any) {
       if (
-        error?.reason === "execution reverted: Account already minted token"
+        error?.reason === "execution reverted: Address already minted token"
       ) {
-        setErrorMessage("Account already minted token");
+        setErrorMessage("Address already minted token");
       } else {
         setErrorMessage(
           "There was problem with minting token. Please try again or contact RedStone team."
@@ -49,7 +49,10 @@ export const TokenMinting = ({ signer, contractAddress }: Props) => {
   return (
     <div>
       {isMinting ? (
-        <LoaderWithTxHash text="Minting token" transactionHash={transactionHash} />
+        <LoaderWithTxHash
+          text="Minting token"
+          transactionHash={transactionHash}
+        />
       ) : !!addressBalance ? (
         <table className="w-full table-auto border">
           <tbody className="text-md">
@@ -62,7 +65,7 @@ export const TokenMinting = ({ signer, contractAddress }: Props) => {
       ) : (
         <div>
           <p className="text-lg font-bold mb-6">
-            Congrats!! Your address is verified, you can mint token
+            Congrats!! Your address has required KYD Level, you can mint token
           </p>
           <ActionButton action={() => onMintToken()} text="Mint token" />
         </div>

@@ -17,7 +17,9 @@ export const VerificationResult = ({
       {verificationResult ? (
         <TokenMinting signer={signer} contractAddress={contractAddress} />
       ) : (
-        <p className="text-lg font-bold">Sorry, your account is not verified</p>
+        <p className="text-lg font-bold">
+          Sorry, your address doesn't have required KYD Level
+        </p>
       )}
     </div>
   </div>
