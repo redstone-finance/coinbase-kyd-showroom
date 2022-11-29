@@ -1,5 +1,5 @@
 import { useState, Dispatch, SetStateAction } from "react";
-import { providers, Contract } from "ethers";
+import { providers, Contract, utils } from "ethers";
 import { WrapperBuilder } from "@redstone-finance/evm-connector";
 import { ScoreType } from "redstone-protocol";
 import { ChainDetails } from "../config/chains";
@@ -14,17 +14,23 @@ export const useAddressVerification = (
   const [errorMessage, setErrorMessage] = useState("");
   const [transactionHash, setTransactionHash] = useState("");
 
-  const verifyAddress = async () => {
+  const verifyAddress = async ({
+    requiredAddressLevel,
+  }: {
+    requiredAddressLevel: number;
+  }) => {
     if (network && signer) {
       try {
         setIsLoading(true);
         const contractAddress = network.contractAddress;
         if (contractAddress) {
-          const verificationResult = await verifyAddressInContract(
+          const transactionData = await verifyAddressInContract(
             contractAddress,
-            signer
+            signer,
+            requiredAddressLevel
           );
-          setVerificationResult(verificationResult);
+          const verificationResult = getVerificationResult(transactionData);
+          setVerificationResult(!!verificationResult);
           setIsLoading(false);
         }
       } catch (error) {
@@ -38,7 +44,8 @@ export const useAddressVerification = (
 
   const verifyAddressInContract = async (
     contractAddress: string,
-    signer: providers.JsonRpcSigner
+    signer: providers.JsonRpcSigner,
+    requiredAddressLevel: number
   ) => {
     try {
       const contract = new Contract(contractAddress, abi, signer);
@@ -48,13 +55,16 @@ export const useAddressVerification = (
       } else {
         const wrappedContract = WrapperBuilder.wrap(
           contract
-        ).usingOnDemandRequest([nodeURL], ScoreType.coinbaseKYC);
-        const transaction = await wrappedContract.verifyAddress({
-          gasLimit: 300000,
-        });
+        ).usingOnDemandRequest([nodeURL], "coinbase-kyd" as ScoreType);
+        const transaction = await wrappedContract.verifyAddress(
+          requiredAddressLevel,
+          {
+            gasLimit: 300000,
+          }
+        );
         setTransactionHash(transaction.hash);
         await transaction.wait();
-        return transaction.value;
+        return transaction.data;
       }
     } catch (error) {
       setVerificationResult(false);
@@ -69,6 +79,16 @@ export const useAddressVerification = (
       "There was problem with verification address. Please try again or contact RedStone team"
     );
   };
+
+  const getVerificationResult = (transactionData?: string) => {
+    if (!transactionData) {
+      return;
+    }
+    const contractInterface = new utils.Interface(abi);
+    const [verificationResult] = contractInterface
+      .decodeFunctionData("verifyAddress", transactionData);
+    return utils.formatUnits(verificationResult, 0);
+  }
 
   return {
     verifyAddress,

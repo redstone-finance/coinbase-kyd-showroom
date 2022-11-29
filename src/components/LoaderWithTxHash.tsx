@@ -1,4 +1,4 @@
-import { LoaderWithText } from "./LoaderWithText"
+import { LoaderWithText } from "./LoaderWithText";
 
 interface Props {
   text: string;
@@ -17,9 +17,7 @@ export const LoaderWithTxHash = ({ text, transactionHash }: Props) => (
           target="blank"
           referrerPolicy="no-referrer"
         >
-          {` ${transactionHash.slice(0, 8)}...${transactionHash.slice(
-            -6
-          )}`}
+          {` ${transactionHash.slice(0, 8)}...${transactionHash.slice(-6)}`}
         </a>
       </p>
     )}

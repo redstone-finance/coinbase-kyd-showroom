@@ -8,6 +8,7 @@ import { ActionButton } from "../components/ActionButton";
 import { ChainButton } from "../components/ChainButton";
 import { LoaderWithTxHash } from "../components/LoaderWithTxHash";
 import { ChainDetails, chains } from "../config/chains";
+import { VerificationButtons } from "../components/VerificationButtons";
 
 const chainsArray = Object.values(chains);
 
@@ -72,7 +73,10 @@ export const Showroom = () => {
             <ChainDataTable walletAddress={walletAddress} network={network} />
           )}
           {isLoading ? (
-            <LoaderWithTxHash text="Verifying address" transactionHash={transactionHash} />
+            <LoaderWithTxHash
+              text="Verifying address"
+              transactionHash={transactionHash}
+            />
           ) : isVerificationComplete ? (
             <VerificationResult
               verificationResult={verificationResult}
@@ -80,9 +84,7 @@ export const Showroom = () => {
               contractAddress={network!.contractAddress}
             />
           ) : (
-            network && (
-              <ActionButton action={verifyAddress} text="Verify address" />
-            )
+            network && <VerificationButtons verifyAddress={verifyAddress} />
           )}
         </div>
       )}
