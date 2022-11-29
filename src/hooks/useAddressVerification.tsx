@@ -55,7 +55,7 @@ export const useAddressVerification = (
       } else {
         const wrappedContract = WrapperBuilder.wrap(
           contract
-        ).usingOnDemandRequest([nodeURL], "coinbase-kyd" as any);
+        ).usingOnDemandRequest([nodeURL], "coinbase-kyd" as ScoreType);
         const transaction = await wrappedContract.verifyAddress(
           requiredAddressLevel,
           {

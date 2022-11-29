@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.4;
 
-import "@redstone-finance/evm-connector/contracts/data-services/KycServiceConsumerBase.sol";
+import "@redstone-finance/evm-connector/contracts/data-services/KydServiceConsumerBase.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract CoinbaseKydShowroom is KycServiceConsumerBase, ERC20 {
+contract CoinbaseKydShowroom is KydServiceConsumerBase, ERC20 {
   mapping (address => uint256) addressesLevels;
   mapping (address => bool) addressWhichMintedToken;
 
