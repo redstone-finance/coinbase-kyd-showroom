@@ -65,7 +65,13 @@ export const TokenMinting = ({ signer, contractAddress }: Props) => {
       ) : (
         <div>
           <p className="text-lg font-bold mb-6">
-            Congrats!! Your address has required KYD Level, you can mint token
+            Congrats!! Your address has required KYD Level.
+          </p>
+          <p className="text-lg font-bold mb-6">
+            You are eligible to mint our KPT token.
+          </p>
+          <p className="text-lg font-bold mb-6">
+            New tokens will be created and deposited in your wallet
           </p>
           <ActionButton action={() => onMintToken()} text="Mint token" />
         </div>
