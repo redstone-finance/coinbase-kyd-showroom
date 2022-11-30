@@ -5,6 +5,8 @@ module.exports = {
     extend: {
       colors: {
         redstone: "#fd627a",
+        "redstone-light": "#ff95a8",
+        "redstone-dark": "#c42c4d",
       },
       boxShadow: {
         "3xl": "2px 2px 15px 0 rgba(0, 0, 0, 0.1);",

@@ -85,10 +85,12 @@ export const useAddressVerification = (
       return;
     }
     const contractInterface = new utils.Interface(abi);
-    const [verificationResult] = contractInterface
-      .decodeFunctionData("verifyAddress", transactionData);
+    const [verificationResult] = contractInterface.decodeFunctionData(
+      "verifyAddress",
+      transactionData
+    );
     return utils.formatUnits(verificationResult, 0);
-  }
+  };
 
   return {
     verifyAddress,
