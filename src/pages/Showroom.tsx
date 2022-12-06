@@ -4,19 +4,17 @@ import { useAddressVerification } from "../hooks/useAddressVerification";
 import { VerificationResult } from "../components/VerificationResult";
 import { ChainDataTable } from "../components/ChainDataTable";
 import Modal from "../components/Modal";
-import { ActionButton } from "../components/ActionButton";
 import { ChainButton } from "../components/ChainButton";
 import { LoaderWithTxHash } from "../components/LoaderWithTxHash";
-import { ChainDetails, chains } from "../config/chains";
+import { chain } from "../config/chain";
 import { VerificationButtons } from "../components/VerificationButtons";
-
-const chainsArray = Object.values(chains);
 
 export const Showroom = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [verificationResult, setVerificationResult] = useState<boolean | null>(
+    null
+  );
   const {
-    verificationResult,
-    setVerificationResult,
     network,
     setNetwork,
     signer,
@@ -24,8 +22,8 @@ export const Showroom = () => {
     walletAddress,
     isChangingNetwork,
     isConnecting,
-  } = useWeb3Modal();
-  const { verifyAddress, transactionHash, errorMessage, setErrorMessage } =
+  } = useWeb3Modal(setVerificationResult);
+  const { verifyAddressAndMintToken, transactionHash, addressBalance, errorMessage, setErrorMessage } =
     useAddressVerification(
       network,
       signer,
@@ -33,7 +31,7 @@ export const Showroom = () => {
       setIsLoading
     );
 
-  const onChainClick = async (chain: ChainDetails) => {
+  const onChainClick = async () => {
     setNetwork(chain);
     if (!signer) {
       await connectWallet();
@@ -50,14 +48,12 @@ export const Showroom = () => {
         </p>
       )}
       <div className="w-3/4 flex flex-wrap justify-center gap-3 px-10 mt-10">
-        {chainsArray.map((chain) => (
-          <ChainButton
-            key={chain.chainId}
-            chain={chain}
-            onChainClick={onChainClick}
-            disabled={isConnecting}
-          />
-        ))}
+        <ChainButton
+          key={chain.chainId}
+          chain={chain}
+          onChainClick={onChainClick}
+          disabled={isConnecting}
+        />
       </div>
       {isChangingNetwork && signer && (
         <p className="mt-10 mb-0 text-lg font-bold">
@@ -74,17 +70,16 @@ export const Showroom = () => {
           )}
           {isLoading ? (
             <LoaderWithTxHash
-              text="Verifying address"
+              text="Verifying address and minting token"
               transactionHash={transactionHash}
             />
           ) : isVerificationComplete ? (
             <VerificationResult
               verificationResult={verificationResult}
-              signer={signer}
-              contractAddress={network!.contractAddress}
+              addressBalance={addressBalance}
             />
           ) : (
-            network && <VerificationButtons verifyAddress={verifyAddress} />
+            network && <VerificationButtons verifyAddressAndMintToken={verifyAddressAndMintToken} />
           )}
         </div>
       )}

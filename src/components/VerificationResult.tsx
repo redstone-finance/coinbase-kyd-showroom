@@ -1,26 +1,25 @@
-import { Signer } from "ethers";
-import { TokenMinting } from "./TokenMinting";
+import { TokenMintingResult } from "./TokenMintingResult";
 
 interface Props {
   verificationResult: boolean;
-  signer: Signer;
-  contractAddress: string;
+  addressBalance: string;
 }
 
 export const VerificationResult = ({
   verificationResult,
-  signer,
-  contractAddress,
-}: Props) => (
-  <div className="w-3/5 text-center mt-3">
-    <div>
-      {verificationResult ? (
-        <TokenMinting signer={signer} contractAddress={contractAddress} />
-      ) : (
-        <p className="text-lg font-bold">
-          Sorry, your address doesn't have required KYD Level
-        </p>
-      )}
+  addressBalance,
+}: Props) => {
+  return (
+    <div className="w-3/5 text-center mt-3">
+      <div>
+        {verificationResult ? (
+          <TokenMintingResult addressBalance={addressBalance} />
+        ) : (
+          <p className="text-lg font-bold">
+            Sorry, your address doesn't have required KYD Level
+          </p>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+} 

@@ -1,17 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { BigNumber, providers } from "ethers";
 import Web3Modal from "web3modal";
-import { ChainDetails, chains } from "../config/chains";
+import { ChainDetails, chain } from "../config/chain";
 
 type NetworkToAdd = Omit<
   ChainDetails,
   "contractAddress" | "contractExplorerUrl" | "logo" | "label"
 >;
 
-export const useWeb3Modal = () => {
-  const [verificationResult, setVerificationResult] = useState<boolean | null>(
-    null
-  );
+export const useWeb3Modal = (
+  setVerificationResult: Dispatch<SetStateAction<boolean | null>>,
+) => {
   const [web3Modal, setWeb3Modal] = useState<Web3Modal | null>(null);
   const [network, setNetwork] = useState<ChainDetails | null>(null);
   const [signer, setSigner] = useState<providers.JsonRpcSigner | null>(null);
@@ -105,20 +104,18 @@ export const useWeb3Modal = () => {
     });
 
     web3ModalProvider.on("chainChanged", async (chainId: BigNumber) => {
-      const chainIdAsNumber = Number(chainId.toString());
-      const chainFromConfig = chains[chainIdAsNumber as keyof typeof chains];
-      if (!chainFromConfig) {
+      const chainIdAsNumber = chainId.toString();
+      const isCorrectNetwork = chain.chainId === chainIdAsNumber;
+      if (!isCorrectNetwork) {
         setNetwork(null);
       } else {
-        setNetwork(chainFromConfig);
+        setNetwork(chain);
         await reconnectWallet();
       }
     });
   };
 
   return {
-    verificationResult,
-    setVerificationResult,
     network,
     setNetwork,
     signer,
