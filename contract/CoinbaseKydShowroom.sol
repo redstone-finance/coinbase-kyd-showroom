@@ -6,9 +6,6 @@ import "@redstone-finance/evm-connector/contracts/data-services/KydServiceConsum
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract CoinbaseKydShowroom is KydServiceConsumerBase, ERC20 {
-  mapping (address => uint256) addressesLevels;
-  mapping (address => bool) addressWhichMintedToken;
-
   constructor() ERC20("KycPassedToken", "KPT") {}
 
   function getUniqueSignersThreshold() public view virtual override returns (uint8) {
@@ -29,18 +26,11 @@ contract CoinbaseKydShowroom is KydServiceConsumerBase, ERC20 {
     }
   }
 
-  function verifyAddress(uint256 requiredAddressLevel) public returns(uint256) {
+  function verifyAddressAndMintToken(uint256 requiredAddressLevel) public returns(uint256) {
     bytes32 dataFeedId = keccak256(abi.encodePacked(msg.sender));
     uint256 addressLevel = getOracleNumericValueFromTxMsg(dataFeedId);
     require(addressLevel >= requiredAddressLevel, "Address does not have required KYD level");
-    addressesLevels[msg.sender] = addressLevel;
+    _mint(msg.sender, 10**addressLevel * 10**18);
     return addressLevel;
-  }
-
-  function mintToken() public {
-    require(addressesLevels[msg.sender] > 0, "Address is not verified");
-    require(addressWhichMintedToken[msg.sender] != true, "Address already minted token");
-    addressWhichMintedToken[msg.sender] = true;
-    _mint(msg.sender, 10**addressesLevels[msg.sender] * 10**18);
   }
 }

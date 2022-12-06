@@ -2,7 +2,7 @@ import { useState, Dispatch, SetStateAction } from "react";
 import { providers, Contract, utils } from "ethers";
 import { WrapperBuilder } from "@redstone-finance/evm-connector";
 import { ScoreType } from "redstone-protocol";
-import { ChainDetails } from "../config/chains";
+import { ChainDetails } from "../config/chain";
 import { abi } from "../config/contract.json";
 
 export const useAddressVerification = (
@@ -13,8 +13,9 @@ export const useAddressVerification = (
 ) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [transactionHash, setTransactionHash] = useState("");
+  const [addressBalance, setAddressBalance] = useState("");
 
-  const verifyAddress = async ({
+  const verifyAddressAndMintToken = async ({
     requiredAddressLevel,
   }: {
     requiredAddressLevel: number;
@@ -24,13 +25,16 @@ export const useAddressVerification = (
         setIsLoading(true);
         const contractAddress = network.contractAddress;
         if (contractAddress) {
-          const transactionData = await verifyAddressInContract(
-            contractAddress,
-            signer,
+          const contract = new Contract(contractAddress, abi, signer);
+          const transactionData = await verifyAddressAndMintTokenInContract(
+            contract,
             requiredAddressLevel
           );
           const verificationResult = getVerificationResult(transactionData);
           setVerificationResult(!!verificationResult);
+          const address = await signer.getAddress();
+          const balance = await contract.balanceOf(address);
+          setAddressBalance(utils.formatUnits(balance, 18));
           setIsLoading(false);
         }
       } catch (error) {
@@ -42,21 +46,19 @@ export const useAddressVerification = (
     }
   };
 
-  const verifyAddressInContract = async (
-    contractAddress: string,
-    signer: providers.JsonRpcSigner,
+  const verifyAddressAndMintTokenInContract = async (
+    contract: Contract,
     requiredAddressLevel: number
   ) => {
     try {
-      const contract = new Contract(contractAddress, abi, signer);
       const nodeURL = process.env.NODE_URL;
       if (!nodeURL) {
         handleError();
       } else {
         const wrappedContract = WrapperBuilder.wrap(
           contract
-        ).usingOnDemandRequest([nodeURL], "coinbase-kyd" as ScoreType);
-        const transaction = await wrappedContract.verifyAddress(
+        ).usingOnDemandRequest([nodeURL], ScoreType.coinbaseKYD);
+        const transaction = await wrappedContract.verifyAddressAndMintToken(
           requiredAddressLevel,
           {
             gasLimit: 300000,
@@ -86,15 +88,16 @@ export const useAddressVerification = (
     }
     const contractInterface = new utils.Interface(abi);
     const [verificationResult] = contractInterface.decodeFunctionData(
-      "verifyAddress",
+      "verifyAddressAndMintToken",
       transactionData
     );
     return utils.formatUnits(verificationResult, 0);
   };
 
   return {
-    verifyAddress,
+    verifyAddressAndMintToken,
     transactionHash,
+    addressBalance,
     errorMessage,
     setErrorMessage,
   };

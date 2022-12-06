@@ -1,4 +1,4 @@
-import { ChainDetails } from "../config/chains";
+import { ChainDetails } from "../config/chain";
 import WalletIcon from "../assets/icons/wallet.png";
 import ContractIcon from "../assets/icons/contract.png";
 
